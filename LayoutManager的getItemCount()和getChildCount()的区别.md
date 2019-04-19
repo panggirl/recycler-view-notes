@@ -1,4 +1,4 @@
-RecyclerView中LayoutManager里面的getItemCount()和getChildCount()的区别
+# RecyclerView中LayoutManager里面的getItemCount()和getChildCount()的区别
 ```
 // getItemCount()这个方法是获取所有的条目数
 public int getItemCount() {
