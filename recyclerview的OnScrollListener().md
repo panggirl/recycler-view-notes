@@ -42,7 +42,7 @@ RecyclerView.OnScrollListener中有一个方法 叫 onScrolled（RecyclerView re
 
 如果 dx>0 则表示 右滑 ， dx<0 表示 左滑 
 dy <0 表示 上滑， dy>0 表示下滑 
-通过这几个参数就可以监听 滑动方向的状态。
+通过这几个参数就可以监听 滑动方向的状态（参考滚动条理解）。
 
 ## 监听 顶部，底部
 但是还有两种情况，不能通过 dx，dy直接判断出来。那就是 顶部 top状态，底部 bottom状态。需要借助一些其他参数，结合来判断。
@@ -82,6 +82,7 @@ loading只是一个flag 用来避免重复加载。
 ##### 第二种方法
 通过View的滑动属性来判断，是否在顶部，或者底部。这种方法的实现非常简便。
 
+
 通过重写 OnScrollListener来判断。
 ```
 public abstract class OnVerticalScrollListener
@@ -111,4 +112,49 @@ public abstract class OnVerticalScrollListener
 ```
 这个方法利用了View的一个方法。public boolean canScrollVertically (int direction) 
 这个方法是判断View在竖直方向是否还能 向上，向下 滑动。
+
+
+判断是否滑动到底部， recyclerView.canScrollVertically(1);返回false表示不能往上滑动，即代表到底部了；
+判断是否滑动到顶部， recyclerView.canScrollVertically(-1);返回false表示不能往下滑动，即代表到顶部了；
+view 自带方法源码：
+```
+/**
+     * Check if this view can be scrolled horizontally in a certain direction.
+     *
+     * @param direction Negative to check scrolling left, positive to check scrolling right.
+     * @return true if this view can be scrolled in the specified direction, false otherwise.
+     * computeHorizontalScrollExtent()：可视区域的大小
+     * computeHorizontalScrollRange()：滑动的整体区域包括不可见区域
+     * computeHorizontalScrollOffset()： 滑出屏幕的区域
+     */
+    public boolean canScrollHorizontally(int direction) {
+        final int offset = computeHorizontalScrollOffset();
+        final int range = computeHorizontalScrollRange() - computeHorizontalScrollExtent();
+        if (range == 0) return false;
+        if (direction < 0) {
+            return offset > 0;
+        } else {
+            return offset < range - 1;
+        }
+    }
+
+    /**
+     * Check if this view can be scrolled vertically in a certain direction.
+     *
+     * @param direction Negative to check scrolling up, positive to check scrolling down.
+     * @return true if this view can be scrolled in the specified direction, false otherwise.
+     */
+    public boolean canScrollVertically(int direction) {
+        final int offset = computeVerticalScrollOffset();
+        final int range = computeVerticalScrollRange() - computeVerticalScrollExtent();
+        if (range == 0) return false;
+        if (direction < 0) {
+            return offset > 0;
+        } else {
+            return offset < range - 1;
+        }
+    }
+```
+
+
 
